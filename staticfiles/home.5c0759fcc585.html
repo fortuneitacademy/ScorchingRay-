@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="{% static 'css/home.css'%}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css'%}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css'%}">
+    <link rel="apple-touch-icon" sizes="180x180" href='{% static "favicon/apple-touch-icon.png" %}'>
+    <link rel="icon" type="image/png" sizes="32x32" href='{% static "favicon/favicon-32x32.png" %}'>
+    <link rel="icon" type="image/png" sizes="16x16" href='{% static "favicon/favicon-16x16.png" %}'>
+    <link rel="manifest" href='{% static "favicon/site.webmanifest" %}'>
+    <script src="{% static 'js/bootstrap.min.js'%}"></script>
+    <script src="{% static 'js/bootstrap.js'%}"></script>
+</head>
+<body class="teal-900" style="margin-bottom: 3%;">
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">
+            <img src="{% static 'img/logo2.png'%}" alt="" width="50" height="50" style="margin-left: 10px;margin-right: 10px;">
+            <span class="navbar-brand h1 white">Scorching Ray</span>
+          </a>
+        </div>
+    </nav>
+    <form action="{% url 'upload'%}" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="input-group mb-3 w-75" style="margin-left: auto; margin-right: auto;margin-top: 3%;">  
+      <input type="file" value="Upload" name="document" class="form-control" id="inputGroupFile02">  
+      <button type="submit" value="Upload" class="input-group-text" for="inputGroupFile02">Upload</button> 
+      </div>
+      <p>{{ from.file }}</p>
+    </form>
+      {% if img_obj %}
+    <form  action="{% url 'convert'%}" method="POST">
+      {% csrf_token %}
+      {{ form }}
+      <div class="card w-75" style="margin-left: auto; margin-right: auto;margin-top: 3%;border: 0.5px solid rgb(150, 150, 150);">
+        <img src="{{img_obj}}" value="Upload"  name="img" class="card-img-top" alt="...">
+        <div class="card-body">
+          <div id="waiting" style="display: none;">
+          <h5 class="card-title">Converting...</h5>
+          <div class="text-center">
+            <div class="spinner-border text-primary" style="width: 4rem; height: 4rem;" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          </div>
+          <div id="customval">
+          <h5 class="card-title">Convert photo to 3D model</h5>
+          <input type="file" name="img" value="{{img_obj}}" style="display: none;">
+          <div><p class="card-text" style="font-weight: bold;">Scale: <span id='rang1' style="font-weight: normal;">0.16</span></p></div>
+          <div><input type="range" min="0" name="scale" max="100" onchange="range1(this.value)"  value="16" style="width: 100%;"></div>
+          <div><p class="card-text" style="font-weight: bold;">Sigma: <span id='rang2' style="font-weight: normal;">1.6</span></p></div>
+          <div><input type="range" name="sigma" min="0" max="100"  onchange="range2(this.value)" value="16" style="width: 100%;"></div>
+          <div><p class="card-text" style="font-weight: bold;">Mask value: <span id='rang3' style="font-weight: normal;">1.6</span></p></div>
+          <div><input type="range" name="mask_val" min="0" max="100"  onchange="range3(this.value)" value="16" style="width: 100%;"></div>
+          <div><button type="submit" onclick="waiting()" value="Upload" class="btn btn-primary mx-auto d-block" style="text-align: center; margin-top: 20px;">Convert</button></div>
+          </div>
+        </div>
+      </div>
+    </form>
+    {% else %}
+    <div class="card w-75 mb-3" style="margin-left: auto; margin-right: auto;margin-top: 3%; border: 0.5px solid rgb(150, 150, 150);">
+      <img src="{% static 'img/1.jpg'%}" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">Convert photo to 3D model</h5>
+        <p class="card-text">This web application converts images into 3D models.</p>
+      </div>
+    </div>
+    {% endif %}
+    {% if stl %}
+    <div class="card w-75" style="margin-left: auto; margin-right: auto;margin-top: 3%;border: 0.5px solid rgb(150, 150, 150);">
+        <img src="{{img}}" class="card-img-top" alt="...">
+        <div class="card-body">
+          <div><a type="button" href="{{stl}}" class="btn btn-primary mx-auto d-block" style="text-align: center; margin-top: 20px;">Download STL</a></div>
+        </div>
+    </div>
+    {% endif %}
+    <script>
+      function waiting() {
+        document.getElementById("waiting").style.display = 'inline';
+        document.getElementById("customval").style.display = 'none';
+      }
+      function range1(value) {
+        document.getElementById('rang1').innerHTML = value / 100;        
+      }
+      function range2(value) {
+        document.getElementById('rang2').innerHTML = value / 10;        
+      }
+      function range3(value) {
+        document.getElementById('rang3').innerHTML = value / 10;        
+      }
+    </script> 
+</body>
+</html>
