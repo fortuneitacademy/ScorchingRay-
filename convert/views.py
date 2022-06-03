@@ -28,31 +28,34 @@ config = {
 
 
 def convert(request):
-    if request.method == 'POST':
-        scale = float(request.POST['scale'])
-        sigma = float(request.POST['sigma'])
-        mask_val = float(request.POST["mask_val"])
-        list_val = []
-        ayth_storage = pyrebase.initialize_app(config)
-        st = ayth_storage.storage()
-        model = Student.objects.all()
-        for mod in model:
-            list_val.append({'img':mod.url_img,'stl':mod.img_name})
-        scale = float(scale / 100)
-        sigma = float(sigma / 10)
-        mask_val = float(mask_val / 10)
-        from imageio import imread
-        A = imread(str(list_val[-1]['img']))  # read from rendered png
-        A = A.mean(axis=2)  # grayscale projection
-        A = gaussian_filter(A,sigma=sigma)  # smoothing
-        stl_path = str(str(list_val[-1]['stl']))
-        stl_path = stl_path.replace('.jpg','.stl')
-        stl_path = stl_path.replace('.png','.stl')
-        stl_path = stl_path.replace('.jpeg','.stl')
-        numpy2stl(A, stl_path, scale=scale, mask_val=mask_val)
-        return render(request,'home.html',{'img':str(list_val[-1]['img']),"stl":str(st.child(stl_path).get_url(None))})
-    else:
-        return HttpResponse("val")
+    try:
+        if request.method == 'POST':
+            scale = float(request.POST['scale'])
+            sigma = float(request.POST['sigma'])
+            mask_val = float(request.POST["mask_val"])
+            list_val = []
+            ayth_storage = pyrebase.initialize_app(config)
+            st = ayth_storage.storage()
+            model = Student.objects.all()
+            for mod in model:
+                list_val.append({'img':mod.url_img,'stl':mod.img_name})
+            scale = float(scale / 100)
+            sigma = float(sigma / 10)
+            mask_val = float(mask_val / 10)
+            from imageio import imread
+            A = imread(str(list_val[-1]['img']))  # read from rendered png
+            A = A.mean(axis=2)  # grayscale projection
+            A = gaussian_filter(A,sigma=sigma)  # smoothing
+            stl_path = str(str(list_val[-1]['stl']))
+            stl_path = stl_path.replace('.jpg','.stl')
+            stl_path = stl_path.replace('.png','.stl')
+            stl_path = stl_path.replace('.jpeg','.stl')
+            numpy2stl(A, stl_path, scale=scale, mask_val=mask_val)
+            return render(request,'home.html',{'img':str(list_val[-1]['img']),"stl":str(st.child(stl_path).get_url(None))})
+        else:
+            return HttpResponse(request,"val")
+    except Exception as e:
+        return HttpResponse(request,str(e))
 
     
 
