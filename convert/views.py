@@ -12,8 +12,9 @@ import os
 from django.core.files.storage import FileSystemStorage
 from .models import Student
 from matplotlib.pylab import imread, imshow
-import pyrebase
+import pyrebase,threading
 import urllib
+from django.template import loader
 URL_IMG = ''
 config = {
 "apiKey": "AIzaSyAGz0NylOh-nKxBstZSN9wjHtql331Uxas",
@@ -29,6 +30,7 @@ config = {
 
 def convert(request):
     try:
+        HttpResponse(request)
         if request.method == 'POST':
             scale = float(request.POST['scale'])
             sigma = float(request.POST['sigma'])
@@ -50,7 +52,13 @@ def convert(request):
             stl_path = stl_path.replace('.jpg','.stl')
             stl_path = stl_path.replace('.png','.stl')
             stl_path = stl_path.replace('.jpeg','.stl')
-            numpy2stl(A, stl_path, scale=scale, mask_val=mask_val)
+            def start_convert(A, stl_path, scale, mask_val):
+                lo = loader.get_template('home.html')
+                lo.render()
+                numpy2stl(A, stl_path, scale=scale, mask_val=mask_val)
+                return HttpResponse(f"{stl_path}")
+            t = threading.Thread(target=start_convert,args=(A, stl_path, scale, mask_val))
+            t.start()
             return render(request,'home.html',{'img':str(list_val[-1]['img']),"stl":str(st.child(stl_path).get_url(None))})
         else:
             return HttpResponse(request,"val")
