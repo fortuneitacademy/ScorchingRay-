@@ -45,17 +45,20 @@ def writeSTL(facets, file_name, ascii=False):
     try:
         import pyrebase
         import urllib
+        from environs import Env
+        env = Env()
+        env.read_env()
         config = {
-        "apiKey": "AIzaSyAGz0NylOh-nKxBstZSN9wjHtql331Uxas",
-        "authDomain": "stlconverter-1f730.firebaseapp.com",
-        "projectId": "stlconverter-1f730",
-        "databaseURL": "https://stlconverter-1f730-default-rtdb.firebaseio.com",
-        "storageBucket": "stlconverter-1f730.appspot.com",
-        "messagingSenderId": "214485460624",
-        "appId": "1:214485460624:web:32025468feb52158321a15",
-        "measurementId": "G-QCZ2DSH4EG"
+            "apiKey":env.str("apiKey"),
+            "authDomain":env.str("authDomain"),
+            "projectId":env.str("projectId"),
+            "databaseURL":env.str("databaseURL"),
+            "storageBucket":env.str("storageBucket"),
+            "messagingSenderId":env.str("messagingSenderId"),
+            "appId":env.str("appId"),
+            "measurementId":env.str("measurementId"),
         }
-        print(dir(pyrebase))
+
         ayth_storage = pyrebase.initialize_app(config)
         st = ayth_storage.storage()    
         if ascii:
