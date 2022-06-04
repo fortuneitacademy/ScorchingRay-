@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "e67b1a8600f4e52dc3c6f7ceeffc06e9d0a3b32d1729c86b7a8269b4fab62b82"
+            "sha256": "1f84404f5a87eaec5ed66861ebc237e2642fa68c5a6d6539f5ef3e4af7a30e07"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -184,6 +184,14 @@
                 "sha256:c4a62634cffc9d636073cef597a44576d67b07660ab2ef1f02b160ee7ecf0e98"
             ],
             "version": "==3.4.2"
+        },
+        "django-letsencrypt": {
+            "hashes": [
+                "sha256:101a647abab41c90fe45d6dcbdd835603b8592f5d7736eecfa6ecbeb08ed5b0d",
+                "sha256:c5fbf683670dafd93078b5f6e576645de1f616a44011691e599f534579378f27"
+            ],
+            "index": "pypi",
+            "version": "==4.1.0"
         },
         "environs": {
             "extras": [
@@ -891,7 +899,7 @@
                 "sha256:b7e3b04a59693c42c36f9ab1cc2acc46fa5df8c78e178fc33a8d4cd05c8d498f",
                 "sha256:d92a187be61fe482e4fd675b6d52200e7be63a12b724abbf931a40ce4fa92938"
             ],
-            "markers": "python_version >= '3.5'",
+            "markers": "python_full_version >= '3.5.0'",
             "version": "==0.20.0"
         },
         "python-jwt": {
@@ -901,6 +909,13 @@
             ],
             "index": "pypi",
             "version": "==3.3.2"
+        },
+        "pytz": {
+            "hashes": [
+                "sha256:1e760e2fe6a8163bc0b3d9a19c4f84342afa0a2affebfaa84b01b978a02ecaa7",
+                "sha256:e68985985296d9a66a881eb3193b0906246245294a881e7c8afe623866ac6a5c"
+            ],
+            "version": "==2022.1"
         },
         "requests": {
             "hashes": [
