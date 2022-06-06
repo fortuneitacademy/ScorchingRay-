@@ -55,9 +55,18 @@
     </div>
     <div class="card mb-3 w-75" style="margin-left: auto; margin-right: auto;margin-top: 3%;">
       <img src="img/1.jpg" class="card-img-top" alt="...">
+        <p id="pe"></p>
       <div class="card-body">
-        <div><a type="button" class="btn btn-primary mx-auto d-block" style="text-align: center; margin-top: 20px;">Download STL</a></div>
+        <div><a type="button" onclick="loadDoc()" class="btn btn-primary mx-auto d-block" style="text-align: center; margin-top: 20px;">Download STL</a></div>
       </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script>
+      function loadDoc() {
+        var xhttp =  "https://firebasestorage.googleapis.com/v0/b/stlconverter-1f730.appspot.com/o/photo%2Fphoto_2022-05-31_10-30-16%20-%20%D0%BA%D0%BE%D0%BF%D0%B8%D1%8F.stl?alt=media&token=45a24797-775f-4dc2-a40e-ed9e5d73f95a";
+        const http = new URL(xhttp);
+        console.log(http);
+      };
+    </script>
 </body>
 </html>
