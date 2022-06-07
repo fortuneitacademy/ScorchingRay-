@@ -46,7 +46,8 @@ def convert(request):
             st = ayth_storage.storage()
             model = Student.objects.all()
             for mod in model:
-                list_val.append({'img':mod.url_img,'stl':mod.img_name})
+                if 3 < len(mod.url_img) and 3 <len(mod.img_name):
+                    list_val.append({'img':mod.url_img,'stl':mod.img_name})
             scale = float(scale / 100)
             sigma = float(sigma / 10)
             mask_val = float(mask_val / 10)
