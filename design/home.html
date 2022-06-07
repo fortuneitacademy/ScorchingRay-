@@ -103,7 +103,7 @@
         console.log($.ajax(
           { type:'GET',
             url:'/ajax',
-            data:{request:'stl',value:"{{stl_org}}"},
+            data:{request:'stl',value:"{{stl}}"},
             success:function (data) {
               if (data.wait === true) {
                 document.getElementById("downloadbtn").style.display = 'none';

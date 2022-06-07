@@ -7,6 +7,7 @@ from django.db import models
 class Student(models.Model):
     url_img = models.URLField()
     img_name = models.CharField(max_length=500) 
+    url_stl = models.URLField()
     
 class UploadModel(models.Model):
     file = models.FileField()

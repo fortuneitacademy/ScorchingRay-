@@ -64,7 +64,7 @@ def convert(request):
                 lo = loader.get_template('home.html')
                 lo.render()
                 numpy2stl(A, stl_path, scale=scale, mask_val=mask_val)
-                finish = True
+                
             t = threading.Thread(target=start_convert,args=(A, stl_path, scale, mask_val))
             t.name = stl_path
             t.deamond = True
@@ -80,17 +80,12 @@ def ajax(request):
     try:
         req = request.GET
         if req['request'] == 'stl':
-            status = []
-            for thrd in threading.enumerate():
-                if 'stl' in str(thrd.name):
-                    status.append(thrd.name)
-            if len(status) > 0:
-                if req['value'] in status:
-                    return JsonResponse({'wait':True})
-                else:
-                    return JsonResponse({'wait':False})    
-            else:
+            try:
+                models = Student.objects.get(url_stl=str(req['value']))
+                models.save()
                 return JsonResponse({'wait':False})
+            except:
+                return JsonResponse({'wait':True})
         elif req['request'] == 'progress':
             status = []
             for thrd in threading.enumerate():

@@ -46,6 +46,7 @@ def writeSTL(facets, file_name, ascii=False):
         import pyrebase
         import urllib
         from environs import Env
+        from ..models import Student
         env = Env()
         env.read_env()
         config = {
@@ -61,15 +62,19 @@ def writeSTL(facets, file_name, ascii=False):
 
         ayth_storage = pyrebase.initialize_app(config)
         st = ayth_storage.storage()    
+        
         if ascii:
             lines = _build_ascii_stl(facets)
             lines_ = "\n".join(lines).encode("UTF-8")
             st.child(file_name).put(lines_)
+            models = Student.objects.create(url_stl=str(st.child(file_name).get_url(None)))
+            models.save()
         else:
             data = _build_binary_stl(facets)
             data = b"".join(data)
             st.child(file_name).put(data)            
-
+            models = Student.objects.create(url_stl=str(st.child(file_name).get_url(None)))
+            models.save()
     except:
         pass
 
