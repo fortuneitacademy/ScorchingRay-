@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     'convert',
-    'letsencrypt',
+    'sslenc',
 ]
 
 MIDDLEWARE = [
@@ -131,5 +131,5 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
-
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO",'https')
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')

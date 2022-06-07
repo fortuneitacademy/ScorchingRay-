@@ -15,28 +15,46 @@
     <link rel="manifest" href='{% static "favicon/site.webmanifest" %}'>
     <script src="{% static 'js/bootstrap.min.js'%}"></script>
     <script src="{% static 'js/bootstrap.js'%}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+
 </head>
 <body class="teal-900" style="margin-bottom: 3%;">
     <nav class="navbar navbar-dark bg-dark">
         <div class="container-fluid">
-          <a class="navbar-brand" href="#">
+          <a class="navbar-brand" href="{% url 'home'%}">
             <img src="{% static 'img/logo2.png'%}" alt="" width="50" height="50" style="margin-left: 10px;margin-right: 10px;">
             <span class="navbar-brand h1 white">Scorching Ray</span>
           </a>
+          <div>
+            <button id="redbtn" onclick="cancelconvert()" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-outline-light" style="margin-left: 10px;margin-right: 10px; display: none;" type="button">
+              <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+              List converting...
+            </button>
+        
+          
         </div>
     </nav>
-    <form action="{% url 'upload'%}" method="POST" enctype="multipart/form-data">
-      {% csrf_token %}
-      <div class="input-group mb-3 w-75" style="margin-left: auto; margin-right: auto;margin-top: 3%;">  
-      <input type="file" value="Upload" name="document" class="form-control" id="inputGroupFile02">  
-      <button type="submit" value="Upload" class="input-group-text" for="inputGroupFile02">Upload</button> 
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">List converting</h5>
+            <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <ul id="listadded" class="list-group">
+              
+            </ul>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
       </div>
-      <p>{{ from.file }}</p>
-    </form>
+    </div>
       {% if img_obj %}
-    <form  action="{% url 'convert'%}" method="POST">
+      <form  action="{% url 'convert'%}" method="POST">
       {% csrf_token %}
-      {{ form }}
       <div class="card w-75" style="margin-left: auto; margin-right: auto;margin-top: 3%;border: 0.5px solid rgb(150, 150, 150);">
         <img src="{{img_obj}}" value="Upload"  name="img" class="card-img-top" alt="...">
         <div class="card-body">
@@ -49,27 +67,27 @@
           <div><input type="range" name="sigma" min="0" max="100"  onchange="range2(this.value)" value="16" style="width: 100%;"></div>
           <div><p class="card-text" style="font-weight: bold;">Mask value: <span id='rang3' style="font-weight: normal;">1.6</span></p></div>
           <div><input type="range" name="mask_val" min="0" max="100"  onchange="range3(this.value)" value="16" style="width: 100%;"></div>
-          <div><button type="submit" onclick="waiting()" value="Upload" class="btn btn-primary mx-auto d-block" style="text-align: center; margin-top: 20px;">Convert</button></div>
+          <div><button type="submit" onclick="waiting()" value="Upload" class="btn btn-dark mx-auto d-block" style="text-align: center; margin-top: 20px;">Convert</button></div>
+          </div>
+          <div id="progressing" style="display: none;">
+            <h5 class="card-title">Converting...</h5>
+            <div class="text-center">
+              <div class="spinner-border text-primary" style="width: 4rem; height: 4rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </form>
-    {% else %}
-    <div class="card w-75 mb-3" style="margin-left: auto; margin-right: auto;margin-top: 3%; border: 0.5px solid rgb(150, 150, 150);">
-      <img src="{% static 'img/1.jpg'%}" class="card-img-top" alt="...">
-      <div class="card-body">
-        <h5 class="card-title">Convert photo to 3D model</h5>
-        <p class="card-text">This web application converts images into 3D models.</p>
-      </div>
-    </div>
-    {% endif %}
-    {% if stl %}
-    {% csrf_token %}
+    {% elif stl %}
     <div class="card mb-3 w-75" style="margin-left: auto; margin-right: auto;margin-top: 3%;border: 0.5px solid rgb(150, 150, 150);">
       <img src="{{img}}" class="card-img-top" alt="...">
-      <div class="card-body">
-        <div id="finsh" style="display: none;"><a type="button" href="{{stl}}" class="btn btn-primary mx-auto d-block" style="text-align: center; margin-top: 20px;">Download STL</a></div>
-        <div id="loading">
+      <div id="downloadbtn" class="card-body" style="display: none;">
+        <div><a type="submit" href="{% url 'home' %}"value="Upload" class="btn btn-dark mx-auto d-block" style="text-align: center; margin-top: 20px;">Another converting</a></div>
+        <div id="finsh" ><a type="submit" href="{{stl}}"value="Upload" class="btn btn-dark mx-auto d-block" style="text-align: center; margin-top: 20px;">Download STL</a></div>
+      </div>
+      <div id="progressing" class="card-body">
         <h5 class="card-title">Converting...</h5>
         <div class="text-center">
           <div class="spinner-border text-primary" style="width: 4rem; height: 4rem;" role="status">
@@ -79,7 +97,77 @@
       </div>
       </div>
     </div>
+    <script>
+      setInterval(ajax,1000)
+      function ajax() {
+        console.log($.ajax(
+          { type:'GET',
+            url:'/ajax',
+            data:{request:'stl',value:"{{stl_org}}"},
+            success:function (data) {
+              if (data.wait === true) {
+                document.getElementById("downloadbtn").style.display = 'none';
+                document.getElementById("progressing").style.display = 'inline';
+              } else {
+                document.getElementById("downloadbtn").style.display = 'inline';
+                document.getElementById("progressing").style.display = 'none';
+              }
+            },
+          }
+        ))
+      }
+    </script>
+    {% else %}
+    <form action="{% url 'upload'%}" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="input-group mb-3 w-75" style="margin-left: auto; margin-right: auto;margin-top: 3%;">  
+      <input type="file" value="Upload" name="document" class="form-control" id="inputGroupFile02">  
+      <button type="submit" value="Upload" class="input-group-text btn-dark" for="inputGroupFile02">Upload</button> 
+      </div>
+    </form>
+    <div class="card w-75 mb-3" style="margin-left: auto; margin-right: auto;margin-top: 3%; border: 0.5px solid rgb(150, 150, 150);">
+      <img src="{% static 'img/1.jpg'%}" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">Convert photo to 3D model</h5>
+        <p class="card-text">This web application converts images into 3D models.</p>
+      </div>
+    </div>
     {% endif %}
+    <script>
+      setInterval(ajax,1000)
+      function ajax() {
+        console.log($.ajax(
+          {
+            type:'GET',
+            url:'/ajax',
+            data:{request:'progress'},
+            success:function (data) {
+              if (data.status === true) {
+                document.getElementById("redbtn").style.display = 'inline';
+              } else {
+                document.getElementById("redbtn").style.display = 'none';
+              }
+            },
+          }
+        ))
+      }
+      function cancelconvert() {
+        console.log($.ajax(
+          {
+            type:'GET',
+            url:'/ajax',
+            data:{request:'cancel'},
+            success:function (data) {
+              document.getElementById("listadded").innerHTML = '';
+              for (let item of data.list){
+                $('#listadded').append('<li class="list-group-item">'+item+'</li>')
+              }
+            },
+          }
+        ))
+      }
+      
+    </script>
     <script>
       function waiting() {
         document.getElementById("waiting").style.display = 'inline';

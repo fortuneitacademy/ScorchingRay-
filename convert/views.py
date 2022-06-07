@@ -6,7 +6,7 @@ import urllib3
 from .forms import UploadFileForm
 from .stl_tools import numpy2stl
 from scipy.ndimage import gaussian_filter
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect,JsonResponse,Http404
 from django.shortcuts import render
 import os
 from django.core.files.storage import FileSystemStorage
@@ -16,6 +16,7 @@ import pyrebase,threading
 import urllib
 from django.template import loader
 from environs import Env
+
 URL_IMG = ''
 env = Env()
 env.read_env()
@@ -35,7 +36,7 @@ config = {
 
 def convert(request):
     try:
-        HttpResponse(request)
+        global finish
         if request.method == 'POST':
             scale = float(request.POST['scale'])
             sigma = float(request.POST['sigma'])
@@ -49,6 +50,7 @@ def convert(request):
             scale = float(scale / 100)
             sigma = float(sigma / 10)
             mask_val = float(mask_val / 10)
+            finish = False
             from imageio import imread
             A = imread(str(list_val[-1]['img']))  # read from rendered png
             A = A.mean(axis=2)  # grayscale projection
@@ -58,36 +60,77 @@ def convert(request):
             stl_path = stl_path.replace('.png','.stl')
             stl_path = stl_path.replace('.jpeg','.stl')
             def start_convert(A, stl_path, scale, mask_val):
+                global finish
                 lo = loader.get_template('home.html')
                 lo.render()
                 numpy2stl(A, stl_path, scale=scale, mask_val=mask_val)
-                return HttpResponse(f"{stl_path}")
+                finish = True
             t = threading.Thread(target=start_convert,args=(A, stl_path, scale, mask_val))
+            t.name = stl_path
+            t.deamond = True
             t.start()
-            return render(request,'home.html',{'img':str(list_val[-1]['img']),"stl":str(st.child(stl_path).get_url(None))})
+            return render(request,'home.html',{'img':str(list_val[-1]['img']),'stl_org':str(stl_path),"stl":str(st.child(stl_path).get_url(None)),'finish':lambda:finish})
         else:
-            return HttpResponse(request,"val")
+            return render(request,'home.html')
     except Exception as e:
-        return HttpResponse(request,str(e))
+        return render(request,'home.html')
 
     
+def ajax(request):
+    try:
+        req = request.GET
+        if req['request'] == 'stl':
+            status = []
+            for thrd in threading.enumerate():
+                if 'stl' in str(thrd.name):
+                    status.append(thrd.name)
+            if len(status) > 0:
+                if req['value'] in status:
+                    return JsonResponse({'wait':True})
+                else:
+                    return JsonResponse({'wait':False})    
+            else:
+                return JsonResponse({'wait':False})
+        elif req['request'] == 'progress':
+            status = []
+            for thrd in threading.enumerate():
+                if 'stl' in str(thrd.name):
+                    status.append(thrd.name)
+            if len(status) > 0:
+                return JsonResponse({'status':True})
+            else:
+                return JsonResponse({'status':False})
+        elif req['request'] == 'cancel':
+            status = []
+            for thrd in threading.enumerate():
+                if 'stl' in str(thrd.name):
+                    status.append(thrd.name)
+            if len(status) == 0:
+                return JsonResponse({'list':status})
+            else:
+                return JsonResponse({'list':status})
+        else:
+            return HttpResponse(request,'none')
 
-
+    except Exception as e:
+        return HttpResponse(request,e)
 def upload(request):
-    if request.method == 'POST':
-        ayth_storage = pyrebase.initialize_app(config)
-        file2 = request.FILES["document"]
-        st = ayth_storage.storage()
-        cludname = 'photo/' + str(file2)
-        st.child(cludname).put(file2)
-        URL_IMG = str(st.child(cludname).get_url(None))
-        model = Student.objects.create(url_img=URL_IMG,img_name=cludname)
-        model.save()
-        return render(request,'home.html',{'img_obj':str(st.child(cludname).get_url(None))})
-    else:
-        form = UploadFileForm()
-    return render(request,'home.html',{'form':form})
-    
+    try:
+        if request.method == 'POST':
+            ayth_storage = pyrebase.initialize_app(config)
+            file2 = request.FILES["document"]
+            st = ayth_storage.storage()
+            cludname = 'photo/' + str(file2)
+            st.child(cludname).put(file2)
+            URL_IMG = str(st.child(cludname).get_url(None))
+            model = Student.objects.create(url_img=URL_IMG,img_name=cludname)
+            model.save()
+            return render(request,'home.html',{'img_obj':str(st.child(cludname).get_url(None))})
+        else:
+            form = UploadFileForm()
+        return render(request,'home.html',{'form':form})
+    except:
+        return render(request,'home.html')
 
 
 class Home(TemplateView):

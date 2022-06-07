@@ -62,11 +62,31 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
     <script>
+      function ajax() {
+        $.ajax(
+          {
+            type:'GET',
+            url:'/ajax',
+            success: function(){
+             document.getElementById('btn').innerHTML = 'Sended' 
+            }
+          }
+        )
+      }
       function loadDoc() {
-        var xhttp =  "https://firebasestorage.googleapis.com/v0/b/stlconverter-1f730.appspot.com/o/photo%2Fphoto_2022-05-31_10-30-16%20-%20%D0%BA%D0%BE%D0%BF%D0%B8%D1%8F.stl?alt=media&token=45a24797-775f-4dc2-a40e-ed9e5d73f95a";
-        const http = new URL(xhttp);
-        console.log(http);
-      };
+        var xhttp =  "https://firebasestorage.googleapis.com/v0/b/stlconverter-1f730.appspot.com/o/Post%20IT-Academy.png?alt=media&token=f0005f11-6545-412a-88f6-4c757830856f";
+        
+        jQuery.ajax(
+          {
+            url:xhttp,
+            dataType:'text',
+            type: 'GET',
+            complete: function(xhr){
+              document.getElementById('pe').innerHTML = xhr.status;
+            }
+          }
+        );
+      }
     </script>
 </body>
 </html>
