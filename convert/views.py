@@ -70,6 +70,7 @@ def convert(request):
             t.name = stl_path
             t.deamond = True
             t.start()
+            Student.objects.all().delete()
             return render(request,'home.html',{'img':str(list_val[-1]['img']),'stl_org':str(stl_path),"stl":str(st.child(stl_path).get_url(None)),'finish':lambda:finish})
         else:
             return render(request,'home.html')
@@ -119,6 +120,7 @@ def upload(request):
             cludname = 'photo/' + str(file2)
             st.child(cludname).put(file2)
             URL_IMG = str(st.child(cludname).get_url(None))
+            Student.objects.all().delete()
             model = Student.objects.create(url_img=URL_IMG,img_name=cludname)
             model.save()
             return render(request,'home.html',{'img_obj':str(st.child(cludname).get_url(None))})
@@ -131,3 +133,4 @@ def upload(request):
 
 class Home(TemplateView):
     template_name = 'home.html'
+    Student.objects.all().delete()

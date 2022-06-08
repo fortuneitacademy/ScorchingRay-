@@ -98,7 +98,7 @@
       </div>
     </div>
     <script>
-      setInterval(ajax,900)
+      setInterval(ajax,10000)
       function ajax() {
         console.log($.ajax(
           { type:'GET',
@@ -108,9 +108,11 @@
               if (data.wait === true) {
                 document.getElementById("downloadbtn").style.display = 'none';
                 document.getElementById("progressing").style.display = 'inline';
+                document.getElementById("redbtn").style.display = 'inline';
               } else {
                 document.getElementById("downloadbtn").style.display = 'inline';
                 document.getElementById("progressing").style.display = 'none';
+                document.getElementById("redbtn").style.display = 'none';
               }
             },
           }
