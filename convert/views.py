@@ -85,6 +85,7 @@ def ajax(request):
         if req['request'] == 'stl':
             try:
                 models = Student.objects.get(url_stl=str(req['value']))
+                models.url_stl=str(req['value'])
                 models.save()
                 return JsonResponse({'wait':False})
             except:
@@ -131,4 +132,4 @@ def upload(request):
 
 class Home(TemplateView):
     template_name = 'home.html'
-    Student.objects.all().delete()
+    
