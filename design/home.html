@@ -134,7 +134,7 @@
     </div>
     {% endif %}
     <script>
-      setInterval(ajax,20500)
+      setInterval(ajax,10000)
       function ajax() {
         console.log($.ajax(
           {
@@ -160,7 +160,7 @@
             success:function (data) {
               document.getElementById("listadded").innerHTML = '';
               for (let item of data.list){
-                $('#listadded').append('<li class="list-group-item">'+item+'</li>')
+                $('#listadded').append('<li class="list-group-item"><a herf="'+item.img+'">'+item.stl+'</li>')
               }
             },
           }

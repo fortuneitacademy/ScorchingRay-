@@ -66,11 +66,12 @@ def convert(request):
                 lo.render()
                 numpy2stl(A, stl_path, scale=scale, mask_val=mask_val)
                 
+                
             t = threading.Thread(target=start_convert,args=(A, stl_path, scale, mask_val))
             t.name = stl_path
             t.deamond = True
             t.start()
-            Student.objects.all().delete()
+
             return render(request,'home.html',{'img':str(list_val[-1]['img']),'stl_org':str(stl_path),"stl":str(st.child(stl_path).get_url(None)),'finish':lambda:finish})
         else:
             return render(request,'home.html')
@@ -99,13 +100,10 @@ def ajax(request):
                 return JsonResponse({'status':False})
         elif req['request'] == 'cancel':
             status = []
-            for thrd in threading.enumerate():
-                if 'stl' in str(thrd.name):
-                    status.append(thrd.name)
-            if len(status) == 0:
-                return JsonResponse({'list':status})
-            else:
-                return JsonResponse({'list':status})
+            model = Student.objects.all()
+            for mod in model:
+                status.append({'img':mod.url_img,'stl':mod.img_name})
+            return JsonResponse({'list':status})
         else:
             return HttpResponse(request,'none')
 

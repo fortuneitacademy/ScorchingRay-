@@ -67,12 +67,14 @@ def writeSTL(facets, file_name, ascii=False):
             lines = _build_ascii_stl(facets)
             lines_ = "\n".join(lines).encode("UTF-8")
             st.child(file_name).put(lines_)
+            Student.objects.all().delete()
             models = Student.objects.create(url_stl=str(st.child(file_name).get_url(None)))
             models.save()
         else:
             data = _build_binary_stl(facets)
             data = b"".join(data)
-            st.child(file_name).put(data)            
+            st.child(file_name).put(data) 
+            Student.objects.all().delete()           
             models = Student.objects.create(url_stl=str(st.child(file_name).get_url(None)))
             models.save()
     except:
