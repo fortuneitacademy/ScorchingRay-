@@ -21,6 +21,8 @@ from django.conf import settings
 
 
 urlpatterns = [
+    re_path(r'^\.well-known/', include('letsencrypt.urls')),
+    path('.well-known/', include('letsencrypt.urls')),
     path('.well-known/',include('sslenc.urls')),
     path('admin/', admin.site.urls),
     path('',include('convert.urls')),

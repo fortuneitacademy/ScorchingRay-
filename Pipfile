@@ -55,7 +55,6 @@ tzdata = "==2022.1"
 uritemplate = "==4.1.1"
 urllib3 = "==1.26.9"
 wrapt = "==1.14.1"
-Django = "==4.0.4"
 Pyrebase4 = "==4.5.0"
 CacheControl = "==0.12.11"
 Deprecated = "==1.2.13"
@@ -65,6 +64,9 @@ whitenoise = "*"
 environs = {version = "==8.0.0", extras = ["django"]}
 psycopg2-binary = "*"
 httpie = "*"
+pytz = "*"
+django-letsencrypt = "*"
+django = "==4.0"
 
 [dev-packages]
 

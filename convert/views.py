@@ -60,6 +60,9 @@ def convert(request):
             stl_path = stl_path.replace('.jpg','.stl')
             stl_path = stl_path.replace('.png','.stl')
             stl_path = stl_path.replace('.jpeg','.stl')
+            stl_path = stl_path.replace('.JPEG','.stl')
+            stl_path = stl_path.replace('.JPG','.stl')
+            stl_path = stl_path.replace('.PNG','.stl')
             def start_convert(A, stl_path, scale, mask_val):
                 global finish
                 lo = loader.get_template('home.html')
